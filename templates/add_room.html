@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add conference room</title>
+</head>
+<body>
+    <a href="http://localhost:8000/room"><p>Back</p></a>
+    {%if err%}
+    <p>{{err}}</p>
+    {%endif%}
+    <form action="/room/new/" method="POST">
+        <label for="name">Name of room:</label><br>
+        <input type="text" name="name" id="name"><br>
+        <label for="size">Size of a room:</label><br>
+        <input type="text" name="size" id="size"><br>
+        <label for="projector">Projector?</label><br>
+        <input type="checkbox" name="projector" id="projector"><br>
+        <button type="submit">Save</button>
+        {%csrf_token%}
+    </form>
+</body>
+</html>
