@@ -7,10 +7,10 @@ class Rooms(models.Model):
 
 
 class Reservation(models.Model):
-    date = models.DateTimeField(unique=True)
+    date = models.DateTimeField()
     room_id = models.ForeignKey(Rooms, on_delete=models.CASCADE)
     comment = models.TextField()
 
 
 class Meta:
-    unique_together = ("date", "name")
+    unique_together = ("room_id", "name")

@@ -6,20 +6,19 @@
     <title>Modify conference room</title>
 </head>
 <body>
+    <a href="/room/"><p>Back</p></a>
     {% if err %}
     <p>{{err}}</p>
     {% endif %}
     <form action="/room/modify/{{id}}" method="POST">
-        <a href="http://localhost:8000/room"><p>Back</p></a>
-        <form action="/room/new/" method="POST">
-            <label for="name">Name of room:</label><br>
-            <input type="text" name="name" id="name"><br>
-            <label for="size">Size of a room:</label><br>
-            <input type="text" name="size" id="size"><br>
-            <label for="projector">Projector?</label><br>
-            <input type="checkbox" name="projector" id="projector"><br>
-            <button type="submit">Save</button>
-            {%csrf_token%}
+        <label for="name">Name of room:</label><br>
+        <input type="text" name="name" id="name"><br>
+        <label for="size">Size of a room:</label><br>
+        <input type="text" name="size" id="size"><br>
+        <label for="projector">Projector?</label><br>
+        <input type="checkbox" name="projector" id="projector"><br>
+        <button type="submit">Save</button>
+        {%csrf_token%}
     </form>
 </body>
 </html>

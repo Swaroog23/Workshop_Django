@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
-from conference_rooms.models import Rooms
+from datetime import datetime
+from conference_rooms.models import Rooms, Reservation
 
 
 class AddRoomView(View):
@@ -82,7 +83,7 @@ class ModifyRoomView(View):
         else:
             proj = False
         try:
-            room = Rooms.objects.get(name=name)
+            Rooms.objects.get(name=name)
             return render(
                 request,
                 "modify_room.html",
@@ -97,7 +98,29 @@ class ModifyRoomView(View):
         return HttpResponseRedirect("/room/")
 
 
+class RoomReservationView(View):
+    def get(self, request, id):
+        return render(request, "reservation.html", context={"id": id})
 
+    def post(self, request, id):
+        room = Rooms.objects.get(pk=id)
+        date = request.POST.get("date")
+        comment = request.POST.get("comm")
+        try:
+            Reservation.objects.get(date=date).filter(room_id=room)
+            return render(request, "reservation.html", context={
+                "id": id,
+                "err": "Date is taken, select other date"
+                })
+        except:
+            if datetime.strptime(date, "%Y-%m-%d") < datetime.now():
+                return render(request, "reservation.html", context={
+                    "id": id,
+                    "err": "Date cannot be from the past"
+                    })
+            else:
+                Reservation.objects.create(date=date, room_id=room, comment=comment)
+        return HttpResponseRedirect("/room/")
 
 def base(request): 
     rooms = Rooms.objects.all()
@@ -112,3 +135,8 @@ def delete(request, id):
     room_to_del = Rooms.objects.get(pk=id)
     room_to_del.delete()
     return HttpResponseRedirect("/room/")
+
+
+def show_room(request, id):
+    room = Rooms.objects.get(pk=id)
+    return render(request, "room_view.html", {"room": room})
