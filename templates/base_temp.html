@@ -15,14 +15,14 @@
         <li>
         Room <a href="/room/{{room.id}}"> {{room.name}}</a><br>
         Size: {{room.size}}<br>
-        Avaiable: <br>
+        Avaiable today: {% if room.id in reservations %} Not avaiable 
+        {%else%} Avaiable  {%endif%} <br>
         Projector installed: {% if room.projector %} Yes {% else %} No {% endif %}<br>
         <a href="/room/modify/{{room.id}}">Edit</a>  
         <a href="/room/delete/{{room.id}}">Delete</a>  
         <a href="/room/reserve/{{room.id}}">Reserve</a>
-
         </li>
-        {%endfor%}
+        {% endfor %}
     </ul><br>
     {% elif empty %}
     <p>{{empty}}</p>

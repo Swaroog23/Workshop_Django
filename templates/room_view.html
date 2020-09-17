@@ -6,6 +6,27 @@
     <title>Room {{room.name}}</title>
 </head>
 <body>
-
+    <a href="/room/"><p>Back</p></a>
+    <p>Name: {{room.name}}</p>
+    <p>Size: {{room.size}}</p>
+    <p>Projector installed: {% if room.projector %} Yes {% else %} No {% endif %} </p>
+    <p>Reserved in days: </p> 
+    {%if not room.reservation_set.all%}
+    <p>No reservations</p>
+    {%else%}
+        <ul>
+        {% for i in room.reservation_set.all %}
+            {% if date_now <= i.date %}
+                <li>
+                    {{ i.date }}<br>
+                    Comment: {{i.comment}}<br> 
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {%endif%}
+        <a href="/room/modify/{{room.id}}"><p>Edit</p></a>  
+        <a href="/room/delete/{{room.id}}"><p>Delete</p></a>  
+        <a href="/room/reserve/{{room.id}}"><p>Reserve</p></a>
 </body>
 </html>

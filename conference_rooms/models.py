@@ -7,7 +7,10 @@ class Rooms(models.Model):
 
 
 class Reservation(models.Model):
-    date = models.DateTimeField()
+    class Meta:
+        ordering = ["date"]
+
+    date = models.DateField()
     room_id = models.ForeignKey(Rooms, on_delete=models.CASCADE)
     comment = models.TextField()
 
