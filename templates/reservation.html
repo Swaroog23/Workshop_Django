@@ -18,5 +18,20 @@
     <button type="submit">Save</button>
         {% csrf_token %}
     </form>
+    <p>Future reservations:</p>
+    {%if not room.reservation_set.all%}
+    <p>No reservations</p>
+    {%else%}
+        <ul>
+        {% for i in room.reservation_set.all %}
+            {% if date_now <= i.date %}
+                <li>
+                    {{ i.date }}<br>
+                    Comment: {{i.comment}}<br> 
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {%endif%}
 </body>
 </html>

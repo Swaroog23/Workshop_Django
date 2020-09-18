@@ -7,20 +7,24 @@ from datetime import date as d
 from conference_rooms.models import Rooms, Reservation
 
 
-
 class AddRoomView(View):
     def get(self, request):
         return render(request, "add_room.html")
 
     def post(self, request):
         name = request.POST.get("name")
+        size = int(request.POST.get("size"))
+        proj = request.POST.get("projector")
+        if proj == "on":
+            proj = True
+        else:
+            proj = False
         if len(name) == 0:
             return render(
                 request, "add_room.html", {"err": "Error: Room must have a name."}
             )
         try:
-            size = int(request.POST.get("size"))
-            if size < 0:
+            if size <= 0:
                 return render(
                     request,
                     "add_room.html",
@@ -30,7 +34,6 @@ class AddRoomView(View):
             return render(
                 request, "add_room.html", {"err": "Error: Room size must be a number."}
             )
-        proj = request.POST.get("projector")
         try:
             Rooms.objects.get(name=name)
             return render(
@@ -39,12 +42,7 @@ class AddRoomView(View):
                 {"err": "Error: Room with this name already exists."},
             )
         except:
-            if proj == "on":
-                proj = True
-            else:
-                proj = False
             Rooms.objects.create(name=name, size=size, projector=proj)
-
             return HttpResponseRedirect("/room/")
 
 
@@ -57,27 +55,33 @@ class ModifyRoomView(View):
         size = request.POST.get("size")
         proj = request.POST.get("projector")
         try:
-           room = Rooms.objects.get(pk=id)
+            room = Rooms.objects.get(pk=id)
         except:
             return render(
                 request,
                 "modify_room.html",
                 {"err": "Error: Room with this id does not exists.", "id": id},
             )
-        if len(name) == 0:
-            return render(
-                request,
-                "modify_room.html",
-                {"err": "Error: Room must have a name.", "id": id},
-            )
         try:
             size = int(size)
+            if size < 0:
+                return render(
+                    request,
+                    "modify_room.html",
+                    {
+                        "err": "Error: Room size must be a number bigger than zero.",
+                        "id": id,
+                    },
+                )
         except:
-            return render(
-                request,
-                "modify_room.html",
-                {"err": "Error: Room size must be a number.", "id": id},
-            )
+            if size == "":
+                size = room.size
+            else:
+                return render(
+                    request,
+                    "modify_room.html",
+                    {"err": "Error: Room size must be a number.", "id": id},
+                )
         if proj == "on":
             proj = True
         else:
@@ -90,6 +94,8 @@ class ModifyRoomView(View):
                 {"err": "Error: Room with this name already exists.", "id": id},
             )
         except:
+            if name == "":
+                name = room.name
             room.name = name
             room.size = size
             room.projector = proj
@@ -99,7 +105,12 @@ class ModifyRoomView(View):
 
 class RoomReservationView(View):
     def get(self, request, id):
-        return render(request, "reservation.html", context={"id": id})
+        room = Rooms.objects.get(pk=id)
+        return render(
+            request,
+            "reservation.html",
+            context={"id": id, "room": room, "date_now": d.today()},
+        )
 
     def post(self, request, id):
         room = Rooms.objects.get(pk=id)
@@ -109,31 +120,46 @@ class RoomReservationView(View):
             return render(
                 request,
                 "reservation.html",
-                context={"id": id, "err": "Please select date"},
+                context={
+                    "id": id,
+                    "err": "Please select date",
+                    "room": room,
+                    "date_now": d.today(),
+                },
             )
         try:
-            r = Reservation.objects.get(date=date_reserved, room_id=room)
-            if r:
-                return render(
-                    request,
-                    "reservation.html",
-                    context={"id": id, "err": "Date is taken, select other date"},
-                )
-        except Exception as e:
-            print(e)
+            Reservation.objects.get(date=date_reserved, room_id=room)
+            return render(
+                request,
+                "reservation.html",
+                context={
+                    "id": id,
+                    "err": "Date is taken, select other date",
+                    "room": room,
+                    "date_now": d.today(),
+                },
+            )
+        except:
             if datetime.strptime(date_reserved, "%Y-%m-%d").date() < d.today():
                 return render(
                     request,
                     "reservation.html",
-                    context={"id": id, "err": "Date cannot be from the past"},
+                    context={
+                        "id": id,
+                        "err": "Date cannot be from the past",
+                        "room": room,
+                        "date_now": d.today(),
+                    },
                 )
             else:
-                Reservation.objects.create(date=date_reserved, room_id=room, comment=comment)
+                Reservation.objects.create(
+                    date=date_reserved, room_id=room, comment=comment
+                )
         return HttpResponseRedirect("/room/")
 
 
 def base(request):
-    rooms = Rooms.objects.all()
+    rooms = Rooms.objects.all().order_by("id")
     reservations = Reservation.objects.filter(date=d.today())
     reserv_list = []
     for reservation in reservations:
@@ -154,7 +180,4 @@ def delete(request, id):
 
 def show_room(request, id):
     room = Rooms.objects.get(pk=id)
-    return render(request, "room_view.html", {
-        "room": room,
-        "date_now": d.today()
-        })
+    return render(request, "room_view.html", {"room": room, "date_now": d.today()})
