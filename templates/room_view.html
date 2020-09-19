@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room {{room.name}}</title>
+    <style>
+    footer {
+    position: absolute;
+    text-align: center;
+    bottom: 0;
+    height: 100px;
+    width: 100%;}
+    </style>
 </head>
 <body>
     <a href="/room/"><p>Back</p></a>
@@ -28,5 +36,6 @@
         <a href="/room/modify/{{room.id}}"><p>Edit</p></a>  
         <a href="/room/delete/{{room.id}}"><p>Delete</p></a>  
         <a href="/room/reserve/{{room.id}}"><p>Reserve</p></a>
+    <footer>Author: Dominik Popławski.</footer>
 </body>
 </html>

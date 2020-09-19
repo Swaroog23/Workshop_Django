@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modify conference room</title>
+    <style>
+    footer {
+    position: absolute;
+    text-align: center;
+    bottom: 0;
+    height: 100px;
+    width: 100%;}
+    </style>
 </head>
 <body>
     <a href="/room/"><p>Back</p></a>
@@ -12,13 +20,15 @@
     {% endif %}
     <form action="/room/modify/{{id}}" method="POST">
         <label for="name">Name of room:</label><br>
-        <input type="text" name="name" id="name"><br>
+        <input type="text" name="name" id="name" value="{{room.name}}"><br>
         <label for="size">Size of a room:</label><br>
-        <input type="text" name="size" id="size"><br>
+        <input type="number" name="size" id="size" value="{{room.size}}"><br>
         <label for="projector">Projector?</label><br>
         <input type="checkbox" name="projector" id="projector"><br>
         <button type="submit">Save</button>
         {%csrf_token%}
     </form>
+
+    <footer>Author: Dominik Popławski.</footer>
 </body>
 </html>

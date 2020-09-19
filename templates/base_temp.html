@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference rooms reservations</title>
+    <style>
+    footer {
+    position: absolute;
+    text-align: center;
+    bottom: 0;
+    height: 100px;
+    width: 100%;}
+    </style>
 </head>
-<style>
-</style>
 <body>
     {% if rooms %}
     <p>Avaiable rooms:</p>
     <ul>
         {% for room in rooms %}
         <li>
-        Room <a href="/room/{{room.id}}"> {{room.name}}</a><br>
-        Size: {{room.size}}<br>
-        Avaiable today: {% if room.id in reservations %} Not avaiable 
-        {%else%} Avaiable  {%endif%} <br>
-        Projector installed: {% if room.projector %} Yes {% else %} No {% endif %}<br>
-        <a href="/room/modify/{{room.id}}">Edit</a>  
-        <a href="/room/delete/{{room.id}}">Delete</a>  
-        <a href="/room/reserve/{{room.id}}">Reserve</a>
+        <p>Room <a href="/room/{{room.id}}"> {{room.name}}</a></p>
+        <p>Size: {{room.size}}</p>
+        <p>Avaiable today: {% if room.id in reservations %} Not avaiable 
+        {%else%} Avaiable  {%endif%}</p> 
+        <p>Projector installed: {% if room.projector %} Yes {% else %} No {% endif %}</p>
+        <a href="/room/modify/{{room.id}}" id="edit">Edit</a>  
+        <a href="/room/delete/{{room.id}}" id="del">Delete</a>  
+        <a href="/room/reserve/{{room.id}}" id="reserv">Reserve</a>
         </li>
         {% endfor %}
     </ul><br>
